@@ -1,0 +1,5 @@
+__pycache__
+/opencv/*
+/openpose_output/videos/*
+/openpose_output/json/*
+!.gitkeep
