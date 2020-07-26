@@ -1,9 +1,10 @@
 import coordinates
-import crop_video
+import extract_video
 
 def main():
     frames = coordinates.generate_frames()
-    crop_video.generate_cropped_video(frames)
+    extract_video.generate_cropped_video(frames)
+    extract_video.convert_to_mp4()
 
 if __name__ == '__main__':
     main()

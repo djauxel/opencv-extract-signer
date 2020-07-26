@@ -107,11 +107,13 @@ def get_bounding_box(keypoints, bounding_box, is_pose, count, width, height):
         else:
             bounding_box.max_y = max_y
 
-def get_average_coordinates(bounding_boxes):
+def get_average_coordinates(bounding_boxes, width, height):
     avg_min_x = 0
     avg_min_y = 0
     avg_max_x = 0
     avg_max_y = 0
+
+    margin = 30
 
     for item in bounding_boxes:
         avg_min_x += item.min_x
@@ -123,6 +125,18 @@ def get_average_coordinates(bounding_boxes):
     avg_min_y = round(avg_min_y / len(bounding_boxes))
     avg_max_x = round(avg_max_x / len(bounding_boxes))
     avg_max_y = round(avg_max_y / len(bounding_boxes))
+
+    # Add left margin
+    if avg_min_x >= margin:
+        avg_min_x -= margin
+
+    # Add top margin
+    if avg_min_y >= margin:
+        avg_min_y -= margin
+    
+    # Add right margin
+    if (width - avg_max_x) >= margin:
+        avg_max_x += margin
 
     return avg_min_x, avg_min_y, avg_max_x, avg_max_y
 
@@ -176,7 +190,7 @@ def generate_frames():
             bounding_boxes.append(bb)
             del bb
 
-        avg_min_x, avg_min_y, avg_max_x, avg_max_y = get_average_coordinates(bounding_boxes)
+        avg_min_x, avg_min_y, avg_max_x, avg_max_y = get_average_coordinates(bounding_boxes, width, height)
 
         f.topLeft = (avg_min_x, avg_min_y)
         f.topRight = (avg_max_x, avg_min_y)

@@ -8,8 +8,8 @@ def get_opencv_dir():
     return 'C:\\Projects\\openpose-extract-signer\\opencv'
 
 def generate_cropped_video(frames):
-    MAX_PROCESS_COUNT = 500
-    process_count = 1
+    MAX_EXTRACT_COUNT = 500
+    extract_count = 1
     
     video_dir = get_video_dir()
 
@@ -34,7 +34,7 @@ def generate_cropped_video(frames):
 
         out = cv2.VideoWriter(video_output, fourcc, fps, (frame_width,frame_height))
 
-        print(f'\nPROCESS {process_count} of {MAX_PROCESS_COUNT}')
+        print(f'\nEXTRACTING {extract_count} of {MAX_EXTRACT_COUNT}')
         print(f'Writing {file} . . .')
 
         while True:
@@ -62,6 +62,39 @@ def generate_cropped_video(frames):
         cv2.destroyAllWindows()
 
         frame_index += 1
-        process_count += 1
+        extract_count += 1
 
-    print('PROCESS FINISHED')
+    print('EXTRACTING FINISHED')
+
+def convert_command(video_avi, video_mp4):
+    
+    base_command = 'ffmpeg' + ' '
+    input_commands = '-i ' + '\"' + video_avi + '\"' + ' ' 
+    options = '-vcodec libx264 -f mp4 -vb 1200k -preset slow' + ' '
+    output_commands = '\"' + video_mp4 + '\"'
+    
+    return base_command + input_commands + options + output_commands
+
+def convert_to_mp4():
+    MAX_CONVERT_COUNT = 500
+    convert_count = 1
+
+    opencv_dir = get_opencv_dir()
+
+    os.chdir(opencv_dir)
+
+    for file in os.listdir(opencv_dir):
+        video_avi_path = opencv_dir + '\\' + file
+
+        video_mp4 = os.path.splitext(file)[0] + '.mp4'
+        video_mp4_path = opencv_dir + '\\' + video_mp4
+
+        print(f'\nCONVERTING {convert_count} of {MAX_CONVERT_COUNT}')
+        print(f'Writing {video_mp4} . . .')
+
+        os.system('cmd /c' + convert_command(video_avi_path, video_mp4_path))
+        os.remove(video_avi_path)
+
+        convert_count += 1
+
+    print('CONVERTING FINISHED')
